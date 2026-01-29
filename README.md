@@ -1,5 +1,4 @@
-# internpetel
-# Portal Pemilihan Pegawai Teladan  
+# STAFF PERFORMANCE RECOGNITION PORTAL  
 Proyek Magang – BPS Provinsi Sulawesi Utara
 
 # Deskripsi
