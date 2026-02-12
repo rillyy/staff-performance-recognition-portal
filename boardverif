@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Verifikator - Staff Performance Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body { background: #f8f9fa; }
+        .demo-badge {
+            position: fixed; top: 80px; right: 20px; background: #dc3545; color: white;
+            padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; z-index: 1000;
+        }
+        .stat-card {
+            border-radius: 15px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); background: white;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); }
+        .stat-card.warning { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+        .stat-card.success { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+        .stat-card.danger { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .stat-card h2 { font-size: 2.5rem; font-weight: bold; }
+        .stat-card .icon { font-size: 3rem; opacity: 0.3; float: right; }
+        .card-custom { border-radius: 15px; border: none; box-shadow: 0 3px 15px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .card-header-custom { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border-radius: 15px 15px 0 0 !important; padding: 15px 20px; }
+    </style>
+</head>
+<body>
+    <div class="demo-badge"><i class="bi bi-eye"></i> DEMO - Verifikator</div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-graph-up-arrow"></i> Staff Performance Portal</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-house-door"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-check-circle"></i> Verifikasi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-trophy"></i> Pegawai Teladan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-file-bar-graph"></i> Laporan</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> Kepala BPS
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="index.html"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-light py-3 border-bottom">
+        <div class="container-fluid">
+            <h5 class="mb-0">Dashboard Verifikator</h5>
+            <small class="text-muted">Selamat datang, Kepala BPS Sulawesi Utara</small>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-card warning">
+                    <i class="bi bi-hourglass-split icon"></i>
+                    <p class="mb-1">Pending Verifikasi</p>
+                    <h2>15</h2>
+                    <small>Data menunggu approval</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card success">
+                    <i class="bi bi-check-circle icon"></i>
+                    <p class="mb-1">Approved Bulan Ini</p>
+                    <h2>32</h2>
+                    <small>Data telah diverifikasi</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card danger">
+                    <i class="bi bi-x-circle icon"></i>
+                    <p class="mb-1">Rejected</p>
+                    <h2>3</h2>
+                    <small>Data perlu perbaikan</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-custom">
+                    <div class="card-header card-header-custom">
+                        <i class="bi bi-clipboard-check"></i> Data yang Perlu Diverifikasi
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead class="table-danger">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Pegawai</th>
+                                    <th>Periode</th>
+                                    <th>CKP</th>
+                                    <th>Keep-Up</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Andi Permana</td>
+                                    <td>Januari 2025</td>
+                                    <td><span class="badge bg-success">✓</span></td>
+                                    <td><span class="badge bg-success">✓</span></td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Siti Nurhaliza</td>
+                                    <td>Januari 2025</td>
+                                    <td><span class="badge bg-success">✓</span></td>
+                                    <td><span class="badge bg-success">✓</span></td>
+                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Budi Santoso</td>
+                                    <td>Januari 2025</td>
+                                    <td><span class="badge bg-success">✓</span></td>
+                                    <td><span class="badge bg-danger">✗</span></td>
+                                    <td><span class="badge bg-secondary">Incomplete</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-secondary" disabled><i class="bi bi-eye"></i> Review</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-custom">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-trophy"></i> Calon Pegawai Teladan
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div>
+                                <strong>1. Budi Santoso</strong>
+                                <br><small class="text-muted">Statistisi Ahli Muda</small>
+                            </div>
+                            <h4 class="text-success mb-0">95.20</h4>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div>
+                                <strong>2. Andi Permana</strong>
+                                <br><small class="text-muted">Statistisi Ahli Pertama</small>
+                            </div>
+                            <h4 class="text-success mb-0">92.50</h4>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>3. Siti Nurhaliza</strong>
+                                <br><small class="text-muted">Pranata Komputer</small>
+                            </div>
+                            <h4 class="text-success mb-0">88.75</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="alert alert-primary">
+                    <h6><i class="bi bi-info-circle"></i> Panduan Verifikasi:</h6>
+                    <ol class="mb-0">
+                        <li>Review kelengkapan data CKP dan Keep-Up</li>
+                        <li>Periksa kewajaran nilai</li>
+                        <li>Approve atau Reject dengan catatan</li>
+                        <li>Tentukan Pegawai Teladan berdasarkan ranking</li>
+                    </ol>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Anda memiliki <strong>15 data</strong> yang menunggu verifikasi!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
