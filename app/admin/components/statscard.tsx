@@ -1,6 +1,6 @@
 interface Props {
   title: string
-  value: number | string
+  value: React.ReactNode
   subtitle?: string
   icon?: React.ReactNode
   color?: string
