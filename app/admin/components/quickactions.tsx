@@ -13,11 +13,11 @@ export default function QuickActions() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         <button
-          onClick={() => router.push("/admin/ckp")}
+          onClick={() => router.push("./admin/input-nilai")}
           className="border-2 border-indigo-500 text-indigo-600 rounded-xl p-4 flex items-center gap-3 hover:bg-indigo-50 transition"
         >
           <PlusCircle size={20} />
-          Input Nilai CKP
+          Input Nilai Final
         </button>
 
         <button
