@@ -16,10 +16,32 @@ export default function AdminPage() {
   const [juriDone, setJuriDone] = useState(0)
   const [juriTotal, setJuriTotal] = useState(0)
   const [nominasiFinal, setNominasiFinal] = useState<any[]>([])
+  const [ranking, setRanking] = useState<any[]>([])
 
   /* ================== LOAD DATA ================== */
   useEffect(() => {
+
     loadData()
+
+    const channel = supabase
+      .channel("penilaian-live")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "penilaian"
+        },
+        () => {
+          getRankingLive()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+
   }, [])
 
   async function loadData() {
@@ -27,6 +49,7 @@ export default function AdminPage() {
     await getCKP()
     await getMonitoringJuri()
     await getNominasiPerTim()
+    await getRankingLive()
   }
 
   async function getPegawai() {
@@ -86,6 +109,22 @@ export default function AdminPage() {
 
     setNominasi(Object.values(bestPerTim))
   }
+
+  /* === FUNCTIONS LIVE RANKING === */
+
+  async function getRankingLive() {
+    const { data, error } = await supabase
+      .rpc("get_ranking_live")
+    if (error) {
+      console.error("Ranking error:", error)
+      return
+    }
+    setRanking(data || [])
+  }
+
+
+
+
 
   /* ================== HANDLE FINAL ================== */
   function handleSetFinal(item: any) {
@@ -173,6 +212,59 @@ export default function AdminPage() {
       </div>
 
       <QuickActions />
+
+      {/* ----- LIVE RANKING ----- */}
+      <div className="bg-[#1a2f6d] p-6 rounded-xl mt-6">
+
+        <h2 className="text-2xl text-yellow-300 font-bold mb-5">
+          Final Ranking
+        </h2>
+
+        {ranking.length === 0 && (
+          <p className="text-blue-200">Belum ada penilaian</p>
+        )}
+
+  {ranking.slice(0,1).map((item:any, index:number)=>(
+        <div
+      key={item.pegawai_id}
+      className="flex items-center gap-4"
+    >
+
+      {/* Rank Box */}
+      <div className="bg-[#FFFFFF]/15 w-16 h-20 flex items-center justify-center rounded-xl text-white text-2xl font-bold">
+        {index + 1}
+      </div>
+
+      {/* Info Card */}
+      <div className="flex items-center justify-between flex-1 bg-[#FFFFFF]/15 p-4 rounded-xl">
+
+        <div>
+
+          <p className="text-xs text-cyan-400 uppercase font-semibold">
+            {item.tim}
+          </p>
+
+          <p className="text-lg font-bold text-white">
+            {item.nama}
+          </p>
+
+          <p className="text-sm text-blue-200">
+            Hasil: {Number(item.nilai).toFixed(1)}
+          </p>
+
+        </div>
+
+        <button className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold">
+          Submit
+        </button>
+
+      </div>
+
+    </div>
+  ))}
+      </div>
+
+
 
       {/* ===== NOMINASI SECTION ===== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
