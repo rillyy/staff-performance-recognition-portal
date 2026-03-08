@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
 export default function UploadSertifikatPage() {
+
   const [pegawai, setPegawai] = useState<any[]>([])
   const [selectedPegawai, setSelectedPegawai] = useState("")
   const [file, setFile] = useState<File | null>(null)
@@ -25,6 +26,7 @@ export default function UploadSertifikatPage() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
+
     e.preventDefault()
 
     if (!file || !selectedPegawai) {
@@ -36,7 +38,6 @@ export default function UploadSertifikatPage() {
 
     const fileName = `${selectedPegawai}-${Date.now()}-${file.name}`
 
-    // Upload ke storage
     const { error: uploadError } = await supabase.storage
       .from("sertifikat")
       .upload(fileName, file)
@@ -47,14 +48,12 @@ export default function UploadSertifikatPage() {
       return
     }
 
-    // Ambil public URL
     const { data: publicUrlData } = supabase.storage
       .from("sertifikat")
       .getPublicUrl(fileName)
 
     const fileUrl = publicUrlData.publicUrl
 
-    // Insert ke tabel
     const { error: insertError } = await supabase
       .from("sertifikat")
       .insert([
@@ -74,40 +73,75 @@ export default function UploadSertifikatPage() {
 
     alert("Sertifikat berhasil disubmit")
 
-    // Reset form
     setFile(null)
     setSelectedPegawai("")
     setLoading(false)
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
 
-      <div className="bg-white rounded-2xl shadow-sm p-8 border max-w-3xl mx-auto">
+    <div className="min-h-screen bg-[#0b1635] text-blue-100 px-6 py-12 flex justify-center">
 
-        <h1 className="text-2xl font-bold mb-6 text-indigo-600">
+      {/* CARD */}
+      <div className="
+        w-full
+        max-w-xl
+        bg-[#1a2f6d]/80
+        backdrop-blur-xl
+        border border-cyan-400/15
+        rounded-2xl
+        shadow-lg
+        p-8
+      ">
+
+        {/* TITLE */}
+        <h1 className="text-2xl font-bold mb-8 text-cyan-300 tracking-wide">
           Upload Sertifikat
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
+          {/* PEGAWAI */}
           <select
             value={selectedPegawai}
             onChange={(e) => setSelectedPegawai(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2 text-gray-600"
+            className="
+              w-full
+              bg-[#0f1c3f]
+              border border-cyan-400/20
+              rounded-lg
+              px-4 py-2
+              focus:outline-none
+              focus:ring-2
+              focus:ring-cyan-400
+              text-blue-100
+            "
           >
             <option value="">Pilih Pegawai</option>
+
             {pegawai.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.nama}
               </option>
             ))}
+
           </select>
 
+          {/* PERIODE */}
           <select
             value={periode}
             onChange={(e) => setPeriode(e.target.value)}
-            className="w-full border rounded-lg px-4 py-2 text-gray-600"
+            className="
+              w-full
+              bg-[#0f1c3f]
+              border border-cyan-400/20
+              rounded-lg
+              px-4 py-2
+              focus:outline-none
+              focus:ring-2
+              focus:ring-cyan-400
+              text-blue-100
+            "
           >
             <option>Triwulan 1</option>
             <option>Triwulan 2</option>
@@ -115,29 +149,63 @@ export default function UploadSertifikatPage() {
             <option>Triwulan 4</option>
           </select>
 
+          {/* TAHUN */}
           <input
             type="number"
             value={tahun}
             onChange={(e) => setTahun(Number(e.target.value))}
-            className="w-full border rounded-lg px-4 py-2 text-gray-600"
+            className="
+              w-full
+              bg-[#0f1c3f]
+              border border-cyan-400/20
+              rounded-lg
+              px-4 py-2
+              focus:outline-none
+              focus:ring-2
+              focus:ring-cyan-400
+              text-blue-100
+            "
           />
 
+          {/* FILE */}
           <input
             type="file"
             accept=".pdf,.jpg,.png"
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="w-full border rounded-lg px-4 py-2 text-gray-600"
+            className="
+              w-full
+              bg-[#0f1c3f]
+              border border-cyan-400/20
+              rounded-lg
+              px-4 py-2
+              text-blue-100
+            "
           />
 
-          <div className="flex justify-end">
+          {/* BUTTON */}
+          <div className="flex justify-end pt-2">
+
             <button
               type="submit"
               disabled={loading}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg"
+              className="
+                px-6 py-2
+                rounded-lg
+                bg-linear-to-r
+                from-cyan-500
+                to-blue-600
+                text-white
+                font-semibold
+                hover:scale-105
+                transition-all
+                shadow-lg
+              "
             >
               {loading ? "Submitting..." : "Submit"}
             </button>
+
           </div>
+
         </form>
 
       </div>

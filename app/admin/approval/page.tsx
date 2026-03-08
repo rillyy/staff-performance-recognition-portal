@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
 export default function ApprovalPage() {
+
   const [data, setData] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -12,6 +13,7 @@ export default function ApprovalPage() {
   }, [])
 
   async function getData() {
+
     const { data } = await supabase
       .from("nilai_final")
       .select(`
@@ -29,6 +31,7 @@ export default function ApprovalPage() {
   }
 
   async function updateStatus(id: string, newStatus: string) {
+
     setLoading(true)
 
     await supabase
@@ -37,76 +40,164 @@ export default function ApprovalPage() {
       .eq("id", id)
 
     await getData()
+
     setLoading(false)
   }
 
+  function getStatusStyle(status:string){
+
+    if(status === "approved")
+      return "bg-green-500/20 text-green-400 border-green-400/30"
+
+    if(status === "rejected")
+      return "bg-red-500/20 text-red-400 border-red-400/30"
+
+    return "bg-orange-500/20 text-orange-400 border-orange-400/30"
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
 
-      <div className="bg-white rounded-2xl shadow-sm p-8 border max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#0b1635] text-blue-100 px-6 sm:px-10 py-10">
 
-        <h1 className="text-2xl font-bold mb-6 text-indigo-600">
-          Approval Nominasi
-        </h1>
+      <div className="max-w-6xl mx-auto space-y-10">
 
-        {data.length === 0 && (
-          <p className="text-gray-500">
-            Belum ada data untuk approval
+        {/* HEADER */}
+
+        <div className="
+          bg-[#1a2f6d]/80
+          backdrop-blur-xl
+          border border-cyan-400/15
+          rounded-2xl
+          shadow-lg
+          p-8
+        ">
+
+          <h1 className="text-2xl font-bold text-cyan-300">
+            Approval Nominasi
+          </h1>
+
+          <p className="text-sm text-blue-300/70 mt-2">
+            Verifikasi nominasi pegawai teladan sebelum penetapan akhir
           </p>
-        )}
 
-        {data.map((item) => (
-          <div
-            key={item.id}
-            className="mb-6 p-4 bg-indigo-50 rounded-xl"
+        </div>
+
+
+        {/* DATA */}
+
+        <div className="
+          bg-[#1a2f6d]/80
+          backdrop-blur-xl
+          border border-cyan-400/15
+          rounded-2xl
+          shadow-lg
+          p-8
+        ">
+
+          <h2 className="text-xl font-bold mb-8 text-cyan-300">
+            Daftar Nominasi
+          </h2>
+
+          {data.length === 0 && (
+            <p className="text-blue-300/60">
+              Belum ada data untuk approval
+            </p>
+          )}
+
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+            {data.map((item) => (
+
+              <div
+                key={item.id}
+                className="
+                  bg-[#0f1c3f]
+                  border border-cyan-400/15
+                  rounded-xl
+                  p-6
+                  flex flex-col
+                  justify-between
+                "
+              >
+
+                <div>
+
+                  <p className="text-sm text-cyan-300 uppercase">
+                    {item.pegawai.tim}
+                  </p>
+
+                  <h3 className="text-lg font-semibold text-white mt-1">
+                    {item.pegawai.nama}
+                  </h3>
+
+                  <p className="text-sm text-blue-300 mt-2">
+                    Total Nilai : {item.total_nilai}
+                  </p>
+
+                  {/* STATUS BADGE */}
+
+                  <div className="
+                    mt-4
+                    text-xs
+                    px-3 py-1
+                    rounded-lg
+                    border
+                    inline-block
+                    font-semibold
+                  "
           >
-            <h3 className="font-bold text-indigo-700 uppercase">
-              {item.pegawai.tim}
-            </h3>
+  {item.status?.toUpperCase() || "PENDING"}
+</div>
 
-            <p className="text-lg font-semibold mt-2">
-              {item.pegawai.nama}
-            </p>
+                </div>
 
-            <p className="text-sm text-gray-600 mb-4">
-              Total Nilai: {item.total_nilai}
-            </p>
+                {/* BUTTONS */}
 
-            <p className="mb-3">
-              Status:
-              {" "}
-              <span className={
-                item.status === "approved"
-                  ? "text-green-600 font-bold"
-                  : item.status === "rejected"
-                  ? "text-red-600 font-bold"
-                  : "text-orange-500 font-bold"
-              }>
-                {item.status.toUpperCase()}
-              </span>
-            </p>
+                <div className="flex gap-3 mt-6">
 
-            <div className="flex gap-3">
+                  <button
+                    disabled={loading}
+                    onClick={() => updateStatus(item.id, "approved")}
+                    className="
+                      flex-1
+                      bg-green-600
+                      hover:bg-green-700
+                      text-white
+                      text-sm
+                      py-2
+                      rounded-lg
+                      transition
+                    "
+                  >
+                    Approve
+                  </button>
 
-              <button
-                disabled={loading}
-                onClick={() => updateStatus(item.id, "approved")}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-lg"
-              >
-                Approve
-              </button>
+                  <button
+                    disabled={loading}
+                    onClick={() => updateStatus(item.id, "rejected")}
+                    className="
+                      flex-1
+                      bg-red-600
+                      hover:bg-red-700
+                      text-white
+                      text-sm
+                      py-2
+                      rounded-lg
+                      transition
+                    "
+                  >
+                    Reject
+                  </button>
 
-              <button
-                disabled={loading}
-                onClick={() => updateStatus(item.id, "rejected")}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-lg"
-              >
-                Reject
-              </button>
+                </div>
 
-            </div>
+              </div>
+
+            ))}
+
           </div>
-        ))}
+
+        </div>
 
       </div>
 
