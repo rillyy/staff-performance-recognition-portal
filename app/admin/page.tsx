@@ -178,32 +178,42 @@ export default function AdminPage() {
 
   /* ================= SUBMIT ================= */
 
-  async function handleSubmitFinal(){
+    async function handleSubmitFinal(){
 
-    if(nominasiFinal.length === 0){
-      alert("Belum ada nominasi final")
-      return
+      if(nominasiFinal.length === 0){
+        alert("Belum ada nominasi final")
+        return
+      }
+
+      for (const item of nominasiFinal) {
+
+        // update status
+        await supabase
+          .from("nilai_final")
+          .update({ status: "pending" })
+          .eq("pegawai_id", item.pegawai.id)
+
+        // insert kandidat ke tabel nominasi_final
+        const { error } = await supabase
+          .from("nominasi_final")
+          .insert({
+            pegawai_id: item.pegawai.id,
+            tim: item.pegawai.tim,
+            total_nilai: item.total_nilai
+          })
+
+        if(error){
+          console.error("Submit error:", error)
+          alert("Gagal kirim ke juri")
+          return
+        }
+
+      }
+
+      alert("Berhasil dikirim ke penilaian juri")
+      setNominasiFinal([])
+
     }
-
-    const payload = nominasiFinal.map((item:any)=>({
-      pegawai_id: item.pegawai.id,
-      total_nilai: item.total_nilai,
-      status:"pending"
-    }))
-
-    const { error } = await supabase
-      .from("approval")
-      .insert(payload)
-
-    if(error){
-      console.error("Submit error:",error)
-      alert("Gagal kirim ke juri")
-      return
-    }
-
-    alert("Berhasil dikirim ke penilaian juri")
-    setNominasiFinal([])
-  }
 
   /* ================= UI ================= */
 
@@ -270,7 +280,9 @@ export default function AdminPage() {
           </p>
         )}
 
-        {ranking.slice(0,1).map((item:any,index:number)=>(
+        <div className="space-y-4">
+
+        {ranking.map((item:any,index:number)=>(
           <div
             key={item.pegawai_id}
             className="flex items-center gap-4"
@@ -283,6 +295,7 @@ export default function AdminPage() {
             <div className="flex justify-between flex-1 bg-white/15 p-4 rounded-xl">
 
               <div>
+
                 <p className="text-xs text-cyan-400 uppercase">
                   {item.tim}
                 </p>
@@ -294,16 +307,17 @@ export default function AdminPage() {
                 <p className="text-sm text-blue-200">
                   Hasil: {Number(item.nilai).toFixed(1)}
                 </p>
+
               </div>
-
-              <button className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold">
-                Submit
-              </button>
-
+                <button className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold">
+                  Submit
+                </button>
             </div>
 
           </div>
         ))}
+
+        </div>
 
       </div>
 
