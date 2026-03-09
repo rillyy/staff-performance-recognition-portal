@@ -177,6 +177,31 @@ export default function AdminPage() {
   }
 
   /* ================= SUBMIT ================= */
+    async function handleSubmitRanking(item:any){
+
+      // kosongkan nominasi_final dulu
+      await supabase
+        .from("nominasi_final")
+        .delete()
+        .neq("id", "00000000-0000-0000-0000-000000000000")
+
+      // insert pemenang
+      const { error } = await supabase
+        .from("nominasi_final")
+        .insert({
+          pegawai_id: item.pegawai_id,
+          tim: item.tim,
+          total_nilai: item.nilai
+        })
+
+      if(error){
+        console.error(error)
+        alert("Gagal kirim ke approval")
+        return
+      }
+
+      alert("Berhasil dikirim ke approval")
+    }
 
     async function handleSubmitFinal(){
 
@@ -309,7 +334,10 @@ export default function AdminPage() {
                 </p>
 
               </div>
-                <button className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold">
+                <button
+                  onClick={() => handleSubmitRanking(item)}
+                  className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold"
+                >
                   Submit
                 </button>
             </div>

@@ -14,45 +14,44 @@ export default function ApprovalPage() {
 
   async function getData() {
 
-    const { data } = await supabase
-      .from("nilai_final")
+    const { data, error } = await supabase
+      .from("nominasi_final")
       .select(`
         id,
         total_nilai,
-        status,
         pegawai (
+          id,
           nama,
           tim
         )
       `)
       .order("total_nilai", { ascending: false })
 
+    if(error){
+      console.error("Error load approval:", error)
+      return
+    }
+
     setData(data || [])
   }
 
-  async function updateStatus(id: string, newStatus: string) {
+  async function updateStatus(pegawaiId: string, newStatus: string) {
 
     setLoading(true)
 
-    await supabase
+    const { error } = await supabase
       .from("nilai_final")
       .update({ status: newStatus })
-      .eq("id", id)
+      .eq("pegawai_id", pegawaiId)
+
+    if(error){
+      console.error("Update status error:", error)
+      alert("Gagal update status")
+    }
 
     await getData()
 
     setLoading(false)
-  }
-
-  function getStatusStyle(status:string){
-
-    if(status === "approved")
-      return "bg-green-500/20 text-green-400 border-green-400/30"
-
-    if(status === "rejected")
-      return "bg-red-500/20 text-red-400 border-red-400/30"
-
-    return "bg-orange-500/20 text-orange-400 border-orange-400/30"
   }
 
   return (
@@ -134,21 +133,6 @@ export default function ApprovalPage() {
                     Total Nilai : {item.total_nilai}
                   </p>
 
-                  {/* STATUS BADGE */}
-
-                  <div className="
-                    mt-4
-                    text-xs
-                    px-3 py-1
-                    rounded-lg
-                    border
-                    inline-block
-                    font-semibold
-                  "
-          >
-  {item.status?.toUpperCase() || "PENDING"}
-</div>
-
                 </div>
 
                 {/* BUTTONS */}
@@ -157,7 +141,7 @@ export default function ApprovalPage() {
 
                   <button
                     disabled={loading}
-                    onClick={() => updateStatus(item.id, "approved")}
+                    onClick={() => updateStatus(item.pegawai.id, "approved")}
                     className="
                       flex-1
                       bg-green-600
@@ -174,7 +158,7 @@ export default function ApprovalPage() {
 
                   <button
                     disabled={loading}
-                    onClick={() => updateStatus(item.id, "rejected")}
+                    onClick={() => updateStatus(item.pegawai.id, "rejected")}
                     className="
                       flex-1
                       bg-red-600
