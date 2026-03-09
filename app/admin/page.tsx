@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [ckpData, setCkpData] = useState<any[]>([])
   const [nominasi, setNominasi] = useState<any>({})
   const [nominasiFinal, setNominasiFinal] = useState<any[]>([])
+  const [ranking, setRanking] = useState<any[]>([])
   const [juriDone, setJuriDone] = useState(0)
   const [juriTotal, setJuriTotal] = useState(0)
 
@@ -30,7 +31,6 @@ export default function AdminPage() {
     const date = new Date(dateString)
 
     return bulan[date.getMonth()]
-
   }
 
   /* ================= LOAD DATA ================= */
@@ -47,6 +47,7 @@ export default function AdminPage() {
     await getCKP()
     await getMonitoringJuri()
     await getNominasiPerTim()
+    await getRankingLive()
 
   }
 
@@ -60,10 +61,8 @@ export default function AdminPage() {
       .order("nama")
 
     if (error) {
-
       console.error("Error getPegawai:", error)
       return
-
     }
 
     setPegawai(data || [])
@@ -82,10 +81,8 @@ export default function AdminPage() {
       `)
 
     if (error) {
-
       console.error("Error getCKP:", error)
       return
-
     }
 
     setCkpData(data || [])
@@ -101,15 +98,13 @@ export default function AdminPage() {
       .select("status")
 
     if (error) {
-
       console.error("Error getMonitoringJuri:", error)
       return
-
     }
 
     if (data) {
 
-      const done = data.filter((d) => d.status === "done").length
+      const done = data.filter((d:any) => d.status === "done").length
 
       setJuriDone(done)
       setJuriTotal(data.length)
@@ -136,10 +131,8 @@ export default function AdminPage() {
       .order("total_nilai", { ascending: false })
 
     if (error) {
-
       console.error("Error getNominasiPerTim:", error)
       return
-
     }
 
     const grouped: any = {}
@@ -149,21 +142,29 @@ export default function AdminPage() {
       const tim = item.pegawai.tim
       const bulan = getNamaBulan(item.periode_bulan)
 
-      if (!grouped[tim]) {
+      if (!grouped[tim]) grouped[tim] = {}
 
-        grouped[tim] = {}
-
-      }
-
-      if (!grouped[tim][bulan]) {
-
-        grouped[tim][bulan] = item
-
-      }
+      if (!grouped[tim][bulan]) grouped[tim][bulan] = item
 
     })
 
     setNominasi(grouped)
+
+  }
+
+  /* ================= LIVE RANKING ================= */
+
+  async function getRankingLive() {
+
+    const { data, error } = await supabase
+      .rpc("get_ranking_live")
+
+    if (error) {
+      console.error("Ranking error:", error)
+      return
+    }
+
+    setRanking(data || [])
 
   }
 
@@ -211,7 +212,7 @@ export default function AdminPage() {
 
       pegawai_id: item.pegawai.id,
       total_nilai: item.total_nilai,
-      status: "pending",
+      status: "pending"
 
     }))
 
@@ -277,7 +278,7 @@ export default function AdminPage() {
           value={
             juriTotal > 0 && juriDone === juriTotal
               ? <span className="text-green-400 font-bold">DONE</span>
-              : <span className="text-xl font-bold text-orange-400 tracking-wide">IN PROGRESS</span>
+              : <span className="text-xl font-bold text-orange-400">IN PROGRESS</span>
           }
           subtitle="Status Evaluasi"
           icon={<Activity className="text-purple-400" size={22} />}
@@ -288,137 +289,56 @@ export default function AdminPage() {
 
       <QuickActions />
 
-      {/* ================= NOMINASI ================= */}
+      {/* ================= LIVE RANKING ================= */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="bg-[#1a2f6d] p-6 rounded-xl mt-6">
 
-        {/* ================= DAFTAR NOMINASI ================= */}
+        <h2 className="text-2xl text-yellow-300 font-bold mb-5">
+          Final Ranking
+        </h2>
 
-        <div className="bg-[#1a2f6d]/80 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-lg p-6">
+        {ranking.length === 0 && (
+          <p className="text-blue-200">Belum ada penilaian</p>
+        )}
 
-          <h2 className="text-xl font-bold mb-6 text-cyan-300">
-            Daftar Nominasi Tim
-          </h2>
+        {ranking.slice(0,1).map((item:any, index:number)=>(
 
-          {Object.entries(nominasi).map(([tim, bulanData]: any) => (
+          <div
+            key={item.pegawai_id}
+            className="flex items-center gap-4"
+          >
 
-            <div
-              key={tim}
-              className="mb-6 p-4 bg-[#1c356f] rounded-xl border border-cyan-300/10"
-            >
-
-              <h3 className="font-bold text-cyan-200 uppercase mb-4">
-                {tim}
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-                {Object.entries(bulanData).map(([bulan, data]: any) => (
-
-                  <div
-                    key={bulan}
-                    className="p-4 bg-[#233e80] rounded-xl"
-                  >
-
-                    <p className="text-cyan-300 text-sm mb-1">
-                      {bulan}
-                    </p>
-
-                    <p className="text-white font-semibold">
-                      {data.pegawai.nama}
-                    </p>
-
-                    <p className="text-blue-200 text-sm mb-3">
-                      Nilai: {data.total_nilai}
-                    </p>
-
-                    <div className="flex gap-2">
-
-                      <button
-                        onClick={() => handleSetFinal(data)}
-                        className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg"
-                      >
-                        OKE
-                      </button>
-
-                      <button
-                        onClick={() => handleRemoveFinal(data.pegawai.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
-                      >
-                        TIDAK
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                ))}
-
-              </div>
-
+            <div className="bg-[#FFFFFF]/15 w-16 h-20 flex items-center justify-center rounded-xl text-white text-2xl font-bold">
+              {index + 1}
             </div>
 
-          ))}
+            <div className="flex items-center justify-between flex-1 bg-[#FFFFFF]/15 p-4 rounded-xl">
 
-        </div>
+              <div>
 
-        {/* ================= NOMINASI FINAL ================= */}
-
-        <div className="bg-[#1a2f6d]/80 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-lg p-6 flex flex-col justify-between">
-
-          <div>
-
-            <h2 className="text-xl font-bold mb-6 text-cyan-300">
-              Nominasi Final
-            </h2>
-
-            {nominasiFinal.length === 0 && (
-              <p className="text-blue-300/60 text-sm">
-                Belum ada nominasi final
-              </p>
-            )}
-
-            {nominasiFinal.map((n: any) => (
-
-              <div
-                key={n.pegawai.id}
-                className="mb-4 p-4 bg-green-900/30 rounded-xl border border-green-400/30"
-              >
-
-                <p className="font-bold text-green-300 uppercase">
-                  {n.pegawai.tim}
+                <p className="text-xs text-cyan-400 uppercase font-semibold">
+                  {item.tim}
                 </p>
 
-                <p className="text-lg font-semibold text-white">
-                  {n.pegawai.nama}
+                <p className="text-lg font-bold text-white">
+                  {item.nama}
                 </p>
 
                 <p className="text-sm text-blue-200">
-                  Total Nilai: {n.total_nilai}
+                  Hasil: {Number(item.nilai).toFixed(1)}
                 </p>
 
               </div>
 
-            ))}
-
-          </div>
-
-          {nominasiFinal.length > 0 && (
-
-            <div className="flex justify-end mt-6">
-
-              <button
-                onClick={handleSubmitFinal}
-                className="px-6 py-2 rounded-lg bg-linear-to-r from-cyan-500 to-blue-600 text-white font-semibold hover:scale-105 transition shadow-lg"
-              >
-                Kirim ke Juri
+              <button className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold">
+                Submit
               </button>
 
             </div>
 
-          )}
+          </div>
 
-        </div>
+        ))}
 
       </div>
 
