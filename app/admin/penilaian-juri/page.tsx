@@ -212,7 +212,7 @@ export default function PenilaianJuriPage() {
       {showModal && selectedPegawai && selectedJuri && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
           
-          <div className="relative bg-[#1f3a74] w-[700px] p-10 rounded-2xl shadow-xl">
+          <div className="relative bg-[#1f3a74] w-175 p-10 rounded-2xl shadow-xl">
 
             {/* tombol X */}
             <button
