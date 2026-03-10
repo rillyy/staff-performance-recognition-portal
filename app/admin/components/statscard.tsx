@@ -4,6 +4,7 @@ interface Props {
   subtitle?: string
   icon?: React.ReactNode
   color?: string
+  valueColor?: string
 }
 
 export default function StatsCard({
@@ -11,7 +12,8 @@ export default function StatsCard({
   value,
   subtitle,
   icon,
-  color = "text-cyan-300"
+  color = "text-cyan-300",
+  valueColor
 }: Props) {
   return (
     <div className="
@@ -32,7 +34,7 @@ export default function StatsCard({
         </p>
 
         {/* VALUE */}
-        <h2 className={`text-3xl font-bold mt-2 ${color}`}>
+        <h2 className={`text-3xl font-bold mt-2 ${valueColor ?? color}`}>
           {value}
         </h2>
 

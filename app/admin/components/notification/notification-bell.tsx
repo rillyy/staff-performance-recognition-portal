@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Bell } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
 import NotificationPanel from "./notification-panel"
@@ -9,6 +9,7 @@ export default function NotificationBell() {
 
   const [open, setOpen] = useState(false)
   const [notif, setNotif] = useState<any[]>([])
+  const bellRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     loadNotif()
@@ -31,8 +32,34 @@ export default function NotificationBell() {
     setNotif(data || [])
   }
 
+  /* CLICK OUTSIDE CLOSE */
+
+  useEffect(() => {
+
+    function handleClickOutside(event: MouseEvent) {
+
+      if (
+        bellRef.current &&
+        !bellRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false)
+      }
+
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+
+  }, [open])
+
   return (
-    <div className="relative">
+
+    <div ref={bellRef} className="relative">
 
       <button
         onClick={() => setOpen(!open)}

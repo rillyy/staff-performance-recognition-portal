@@ -73,6 +73,19 @@ export default function LaporanPage() {
 
       <div className="max-w-6xl mx-auto space-y-10">
 
+        {/* ================= HEADER ================= */}
+
+        <div>
+          <h1 className="text-3xl font-bold text-cyan-300">
+            Generate Laporan
+          </h1>
+
+          <p className="text-blue-300/70 mt-1">
+            Access Your Quarterly Performance Reports
+          </p>
+        </div>
+
+
         {/* ================= FORM ================= */}
 
         <div className="
@@ -83,10 +96,6 @@ export default function LaporanPage() {
           shadow-lg
           p-8
         ">
-
-          <h1 className="text-2xl font-bold mb-8 text-cyan-300 tracking-wide">
-            Generate Laporan Triwulanan
-          </h1>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
 

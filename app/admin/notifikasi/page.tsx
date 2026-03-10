@@ -120,6 +120,22 @@ export default function NotifikasiPage() {
 
       <div className="max-w-6xl mx-auto space-y-10">
 
+        {/* ===============================
+            HEADER PAGE
+        =============================== */}
+
+        <div>
+
+          <h1 className="text-3xl font-bold text-cyan-300">
+            Notifikasi
+          </h1>
+
+          <p className="text-blue-300/70 mt-1">
+            Create and manage system notifications.
+          </p>
+
+        </div>
+
 
         {/* ===============================
             FORM TAMBAH NOTIF

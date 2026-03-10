@@ -45,152 +45,154 @@ export default function Header({ title, subtitle }: HeaderProps) {
 
   return (
 
-    <header
-  className="
-  relative
-  flex items-center justify-between
-  px-10 py-6
-  bg-[#182758]
-  border border-[#252564]
-  rounded-xl
-  overflow-visible"
+<header
+className="
+relative
+flex flex-wrap items-center justify-between
+gap-y-4
+px-6 md:px-8 lg:px-10
+py-4 md:py-5
+bg-[#182758]
+border border-[#252564]
+rounded-xl
+overflow-visible
+"
 >
 
-      {/* Neon Bottom Line */}
+{/* Neon Bottom Line */}
 
-      <div className="
-        absolute bottom-0 left-0 right-0 h-0.5
-        bg-linear-to-r
-        from-transparent
-        via-cyan-400
-        to-transparent
-        shadow-[0_0_12px_rgba(0,198,255,0.5)]
-      " />
+<div className="
+absolute bottom-0 left-0 right-0 h-0.5
+bg-linear-to-r
+from-transparent
+via-cyan-400
+to-transparent
+shadow-[0_0_12px_rgba(0,198,255,0.5)]
+" />
 
-      {/* Top Line */}
+{/* Top Line */}
 
-      <div className="
-        absolute top-0 left-0 right-0 h-px
-        bg-linear-to-r
-        from-transparent
-        via-white/10
-        to-transparent
-      " />
+<div className="
+absolute top-0 left-0 right-0 h-px
+bg-linear-to-r
+from-transparent
+via-white/10
+to-transparent
+" />
 
-      {/* Background Glow */}
+{/* Background Glow */}
 
-      <div className="
-        absolute inset-0 pointer-events-none
-        bg-[radial-gradient(ellipse_at_5%_50%,rgba(0,198,255,0.05),transparent_50%),radial-gradient(ellipse_at_95%_50%,rgba(162,89,255,0.05),transparent_50%)]
-      " />
-
-
-
-      {/* LEFT SIDE */}
-
-      <div className="relative z-10 flex items-center gap-6">
-
-        <div className="relative">
-
-          <h1 className="
-            font-['Orbitron']
-            text-3xl
-            font-black
-            tracking-[5px]
-            bg-linear-to-r
-            from-cyan-400
-            to-purple-500
-            bg-clip-text
-            text-transparent
-          ">
-            ORBIT
-          </h1>
-
-          <div className="
-            absolute inset-0
-            blur-lg
-            opacity-40
-            bg-linear-to-r
-            from-cyan-400
-            to-purple-500
-            bg-clip-text
-            text-transparent
-          ">
-            ORBIT
-          </div>
-
-        </div>
+<div className="
+absolute inset-0 pointer-events-none
+bg-[radial-gradient(ellipse_at_5%_50%,rgba(0,198,255,0.05),transparent_50%),radial-gradient(ellipse_at_95%_50%,rgba(162,89,255,0.05),transparent_50%)]
+" />
 
 
-        <div className="w-px h-12 bg-linear-to-b from-transparent via-cyan-400/40 to-transparent" />
+{/* LEFT SIDE */}
 
-        <div>
+<div className="relative z-10 flex items-center gap-4 md:gap-6">
 
-          <h2 className="
-            text-sm
-            tracking-[3px]
-            uppercase
-            font-semibold
-            text-blue-100
-          ">
-            {title}
-          </h2>
+<div className="relative">
 
-          <p className="
-            text-[10px]
-            tracking-[3px]
-            uppercase
-            text-blue-400
-            mt-1
-          ">
-            {subtitle}
-          </p>
+<h1 className="
+font-['Orbitron']
+text-2xl md:text-3xl
+font-black
+tracking-[4px]
+bg-linear-to-r
+from-cyan-400
+to-purple-500
+bg-clip-text
+text-transparent
+">
+ORBIT
+</h1>
 
-        </div>
+<div className="
+absolute inset-0
+blur-lg
+opacity-40
+bg-linear-to-r
+from-cyan-400
+to-purple-500
+bg-clip-text
+text-transparent
+">
+ORBIT
+</div>
 
-      </div>
-
-
-
-      {/* RIGHT SIDE */}
-
-      <div className="relative z-10 flex items-center gap-6">
-
-        {/* Clock */}
-
-        <div className="text-right">
-
-          <div className="
-            font-['Orbitron']
-            text-sm
-            tracking-[2px]
-            text-cyan-400
-          ">
-            {time}
-          </div>
-
-          <div className="text-[10px] tracking-[2px] text-blue-400 mt-1 uppercase">
-            {date}
-          </div>
-
-        </div>
+</div>
 
 
-        <div className="w-px h-10 bg-linear-to-b from-transparent via-white/10 to-transparent" />
+<div className="hidden md:block w-px h-12 bg-linear-to-b from-transparent via-cyan-400/40 to-transparent" />
+
+<div>
+
+<h2 className="
+text-xs md:text-sm
+tracking-[3px]
+uppercase
+font-semibold
+text-blue-100
+">
+{title}
+</h2>
+
+<p className="
+text-[9px] md:text-[10px]
+tracking-[3px]
+uppercase
+text-blue-400
+mt-1
+">
+{subtitle}
+</p>
+
+</div>
+
+</div>
 
 
-        {/* Notification Bell */}
 
-        <NotificationBell />
+{/* RIGHT SIDE */}
+
+<div className="relative z-10 flex items-center gap-4 md:gap-6 ml-auto">
+
+{/* Clock */}
+
+<div className="text-right hidden sm:block">
+
+<div className="
+font-['Orbitron']
+text-xs md:text-sm
+tracking-[2px]
+text-cyan-400
+">
+{time}
+</div>
+
+<div className="text-[9px] md:text-[10px] tracking-[2px] text-blue-400 mt-1 uppercase">
+{date}
+</div>
+
+</div>
 
 
-        {/* Avatar */}
+<div className="hidden sm:block w-px h-10 bg-linear-to-b from-transparent via-white/10 to-transparent" />
 
-        <ProfilePanel />
 
-      </div>
+{/* Notification Bell */}
 
-    </header>
+<NotificationBell />
+
+
+{/* Avatar */}
+
+<ProfilePanel />
+
+</div>
+
+</header>
 
   )
 

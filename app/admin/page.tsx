@@ -17,8 +17,6 @@ export default function AdminPage() {
   const [juriDone, setJuriDone] = useState(0)
   const [juriTotal, setJuriTotal] = useState(0)
 
-  /* ================= HELPER BULAN ================= */
-
   function getNamaBulan(dateString: string) {
 
     const bulan = [
@@ -30,8 +28,6 @@ export default function AdminPage() {
 
     return bulan[date.getMonth()]
   }
-
-  /* ================= LOAD DATA ================= */
 
   useEffect(() => {
     loadData()
@@ -45,51 +41,30 @@ export default function AdminPage() {
     await getRankingLive()
   }
 
-  /* ================= GET PEGAWAI ================= */
-
   async function getPegawai() {
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("pegawai")
       .select("*")
       .order("nama")
 
-    if (error) {
-      console.error("Error getPegawai:", error)
-      return
-    }
-
     setPegawai(data || [])
   }
 
-  /* ================= GET CKP ================= */
-
   async function getCKP() {
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("ckp")
       .select(`id, pegawai ( nama )`)
-
-    if (error) {
-      console.error("Error getCKP:", error)
-      return
-    }
 
     setCkpData(data || [])
   }
 
-  /* ================= MONITORING JURI ================= */
-
   async function getMonitoringJuri() {
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("penilaian")
       .select("status")
-
-    if (error) {
-      console.warn("Monitoring juri gagal:", error.message)
-      return
-    }
 
     if (!data) return
 
@@ -99,11 +74,9 @@ export default function AdminPage() {
     setJuriTotal(data.length)
   }
 
-  /* ================= NOMINASI PER TIM ================= */
-
   async function getNominasiPerTim() {
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("nilai_final")
       .select(`
         total_nilai,
@@ -115,11 +88,6 @@ export default function AdminPage() {
         )
       `)
       .order("total_nilai", { ascending:false })
-
-    if (error) {
-      console.error("Error getNominasiPerTim:", error)
-      return
-    }
 
     const grouped:any = {}
 
@@ -137,38 +105,12 @@ export default function AdminPage() {
     setNominasi(grouped)
   }
 
-  /* ================= LIVE RANKING ================= */
-
   async function getRankingLive() {
 
-    const { data, error } = await supabase.rpc("get_ranking_live")
-
-    if(error){
-      console.warn("Ranking error:", error.message)
-      return
-    }
+    const { data } = await supabase.rpc("get_ranking_live")
 
     setRanking(data || [])
   }
-
-  /* ================= SUBMIT RANKING ================= */
-
-  async function handleSubmitRanking(item:any){
-
-    const { error } = await supabase
-      .from("ranking_final")
-      .insert(item)
-
-    if(error){
-      console.error(error)
-      alert("Gagal submit ranking")
-      return
-    }
-
-    alert("Ranking berhasil dikirim")
-  }
-
-  /* ================= NOMINASI FINAL ================= */
 
   function handleSetFinal(item:any){
 
@@ -193,8 +135,6 @@ export default function AdminPage() {
     )
   }
 
-  /* ================= SUBMIT KE JURI ================= */
-
   async function handleSubmitFinal() {
 
     if (nominasiFinal.length === 0) {
@@ -208,21 +148,14 @@ export default function AdminPage() {
       status: "pending"
     }))
 
-    const { error } = await supabase
+    await supabase
       .from("approval")
       .insert(payload)
 
-    if (error) {
-      console.error("Submit error:", error)
-      alert("Gagal mengirim data ke penilaian juri")
-      return
-    }
-
     alert("Berhasil dikirim ke penilaian juri")
+
     setNominasiFinal([])
   }
-
-  /* ================= UI ================= */
 
   return (
 
@@ -259,21 +192,176 @@ export default function AdminPage() {
         />
 
         <StatsCard
-          title="Monitoring Penilaian TPK"
-          value={
-            juriTotal>0 && juriDone===juriTotal
-            ? "DONE"
-            : "IN PROGRESS"
-          }
-          subtitle="Status Evaluasi"
-          icon={<Activity size={22}/>}
-        />
+  title="Monitoring Penilaian TPK"
+  value={
+    juriTotal>0 && juriDone===juriTotal
+    ? "DONE"
+    : "IN PROGRESS"
+  }
+  valueColor={
+    juriTotal>0 && juriDone===juriTotal
+    ? "text-green-400"
+    : "text-cyan-400"
+  }
+  subtitle="Status Evaluasi"
+  icon={<Activity size={22}/>}
+/>
 
       </div>
 
       <QuickActions/>
 
-      {/* ================= FINAL RANKING ================= */}
+      {/* NOMINASI SECTION */}
+
+      <div className="grid lg:grid-cols-3 gap-6">
+
+        {/* NOMINASI TIM */}
+
+        <div className="lg:col-span-2 bg-[#1a2f6d] p-6 rounded-xl">
+
+          <h2 className="text-xl font-bold text-cyan-300 mb-6">
+            Nominasi Tim
+          </h2>
+
+          {Object.keys(nominasi).map((tim)=>{
+
+            const bulanData = nominasi[tim]
+
+            return(
+
+              <div key={tim} className="mb-8">
+
+                <h3 className="text-cyan-400 font-semibold mb-3 uppercase">
+                  {tim}
+                </h3>
+
+                <div className="grid md:grid-cols-3 gap-4">
+
+                  {Object.keys(bulanData).map((bulan)=>{
+
+                    const item:any = bulanData[bulan]
+
+                    return(
+
+                      <div
+                        key={bulan}
+                        className="bg-white/10 p-4 rounded-lg space-y-2"
+                      >
+
+                        <p className="text-xs text-yellow-300 font-semibold">
+                          {bulan}
+                        </p>
+
+                        <p className="font-semibold">
+                          {item.pegawai.nama}
+                        </p>
+
+                        <p className="text-sm text-blue-200">
+                          Nilai {item.total_nilai}
+                        </p>
+
+                        <div className="flex gap-2 pt-2">
+
+                          <button
+                            onClick={()=>handleSetFinal(item)}
+                            className="bg-green-500 hover:bg-green-600 px-3 py-1 text-sm rounded"
+                          >
+                            Oke
+                          </button>
+
+                          <button
+                            className="bg-red-500 hover:bg-red-600 px-3 py-1 text-sm rounded"
+                          >
+                            Tidak
+                          </button>
+
+                        </div>
+
+                      </div>
+
+                    )
+
+                  })}
+
+                </div>
+
+              </div>
+
+            )
+
+          })}
+
+        </div>
+
+        {/* NOMINASI FINAL */}
+
+        <div className="bg-[#1a2f6d] p-6 rounded-xl">
+
+          <h2 className="text-xl font-bold text-purple-300 mb-6">
+            Nominasi Final
+          </h2>
+
+          {nominasiFinal.length === 0 && (
+            <p className="text-blue-200">
+              Belum ada kandidat dipilih
+            </p>
+          )}
+
+          <div className="space-y-4">
+
+            {nominasiFinal.map((item:any)=>(
+
+              <div
+                key={item.pegawai.id}
+                className="bg-white/10 p-4 rounded-lg flex justify-between items-center"
+              >
+
+                <div>
+
+                  <p className="text-xs text-cyan-400 uppercase">
+                    {item.pegawai.tim}
+                  </p>
+
+                  <p className="font-semibold">
+                    {item.pegawai.nama}
+                  </p>
+
+                  <p className="text-sm text-blue-200">
+                    Nilai {item.total_nilai}
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={()=>handleRemoveFinal(item.pegawai.id)}
+                  className="bg-red-500 px-3 py-1 text-sm rounded"
+                >
+                  Hapus
+                </button>
+
+              </div>
+
+            ))}
+
+          </div>
+
+          {nominasiFinal.length > 0 && (
+
+            <button
+              onClick={handleSubmitFinal}
+              className="mt-6 w-full bg-yellow-400 text-black py-2 rounded-lg font-bold"
+            >
+              Kirim ke Penilaian Juri
+            </button>
+
+          )}
+
+        </div>
+
+      </div>
+
+
+      {/* FINAL RANKING */}
 
       <div className="bg-[#1a2f6d] p-6 rounded-xl">
 
@@ -289,47 +377,40 @@ export default function AdminPage() {
 
         <div className="space-y-4">
 
-          {ranking.slice(0,1).map((item:any, index:number)=>(
+        {ranking.slice(0,3).map((item:any, index:number)=>(
 
-            <div
-              key={item.pegawai_id}
-              className="flex items-center gap-4"
-            >
+          <div
+            key={item.pegawai_id}
+            className="flex items-center gap-4"
+          >
 
-              <div className="bg-white/15 w-16 h-20 flex items-center justify-center rounded-xl text-2xl font-bold">
-                {index+1}
-              </div>
+            <div className="bg-white/15 w-16 h-20 flex items-center justify-center rounded-xl text-2xl font-bold">
+              {index+1}
+            </div>
 
-              <div className="flex justify-between flex-1 bg-white/15 p-4 rounded-xl">
+            <div className="flex justify-between flex-1 bg-white/15 p-4 rounded-xl">
 
-                <div>
+              <div>
 
-                  <p className="text-xs text-cyan-400 uppercase font-semibold">
-                    {item.tim}
-                  </p>
+                <p className="text-xs text-cyan-400 uppercase font-semibold">
+                  {item.tim}
+                </p>
 
-                  <p className="text-lg font-bold">
-                    {item.nama}
-                  </p>
+                <p className="text-lg font-bold">
+                  {item.nama}
+                </p>
 
-                  <p className="text-sm text-blue-200">
-                    Hasil: {Number(item.nilai).toFixed(1)}
-                  </p>
-
-                </div>
-
-                <button
-                  onClick={() => handleSubmitRanking(item)}
-                  className="bg-yellow-300 px-5 py-2 rounded-lg text-black font-bold"
-                >
-                  Submit
-                </button>
+                <p className="text-sm text-blue-200">
+                  Hasil: {Number(item.nilai).toFixed(1)}
+                </p>
 
               </div>
 
             </div>
 
-          ))}
+          </div>
+
+        ))}
 
         </div>
 

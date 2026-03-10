@@ -37,8 +37,6 @@ export default function Sidebar() {
     return pathname === path
   }
 
-  /* ================= GET USER PROFILE ================= */
-
   useEffect(() => {
     getProfile()
   }, [])
@@ -61,12 +59,9 @@ export default function Sidebar() {
 
   }
 
-  /* ================= LOGOUT ================= */
-
   async function logout() {
 
     await supabase.auth.signOut()
-
     router.push("/login")
 
   }
@@ -74,7 +69,7 @@ export default function Sidebar() {
   return (
     <>
 
-      {/* ================= MOBILE TOP BAR ================= */}
+      {/* MOBILE TOP BAR */}
 
       <div className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-[#0b1635] border-b border-cyan-400/10 flex items-center px-4 z-50">
 
@@ -88,8 +83,7 @@ export default function Sidebar() {
 
       </div>
 
-
-      {/* ================= OVERLAY ================= */}
+      {/* OVERLAY */}
 
       {mobileOpen && (
         <div
@@ -98,11 +92,12 @@ export default function Sidebar() {
         />
       )}
 
-
-      {/* ================= SIDEBAR ================= */}
+      {/* SIDEBAR */}
 
       <div
+        data-collapsed={collapsed}
         className={`
+        sidebar
         fixed top-0 left-0 h-screen
         bg-linear-to-b from-[#0f1c3f] to-[#132a5c]
         border-r border-cyan-400/10
@@ -126,8 +121,7 @@ export default function Sidebar() {
 
         </div>
 
-
-        {/* ================= TOP LOGO ================= */}
+        {/* LOGO */}
 
         <div className="flex flex-col items-center py-8 border-b border-cyan-400/10">
 
@@ -142,7 +136,6 @@ export default function Sidebar() {
             <div className="absolute top-1/2 left-1/2 w-7 h-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_35%_35%,#7ee8fa,#0e3b5c)] shadow-[0_0_15px_#00c6ffaa]" />
 
           </div>
-
 
           {!collapsed && (
             <>
@@ -172,8 +165,7 @@ export default function Sidebar() {
 
         </div>
 
-
-        {/* ================= MENU ================= */}
+        {/* MENU */}
 
         <nav className="flex-1 px-3 py-6 space-y-2 text-sm">
 
@@ -191,7 +183,7 @@ export default function Sidebar() {
 
           {menuItem("/admin/notifikasi", "Notifikasi", <Bell size={18} />, collapsed, isActive)}
 
-          {/* DROPDOWN SERTIFIKAT */}
+          {/* DROPDOWN */}
 
           <div>
 
@@ -216,7 +208,6 @@ export default function Sidebar() {
 
             </button>
 
-
             {openCertificate && !collapsed && (
 
               <div className="ml-7 mt-2 space-y-2 text-blue-300">
@@ -235,21 +226,17 @@ export default function Sidebar() {
 
           </div>
 
-
           {menuItem("/admin/approval", "Approval", <CheckCircle size={18} />, collapsed, isActive)}
 
           {menuItem("/admin/history", "Arsip / History", <History size={18} />, collapsed, isActive)}
 
         </nav>
 
-
-        {/* ================= SIDEBAR BOTTOM PROFILE ================= */}
+        {/* PROFILE */}
 
         <div className="px-3 py-4 border-t border-cyan-400/10">
 
           <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-cyan-500/10 transition">
-
-            {/* AVATAR */}
 
             <div className="
               w-9 h-9
@@ -264,7 +251,6 @@ export default function Sidebar() {
               <User size={16} />
             </div>
 
-
             {!collapsed && (
               <>
                 <div className="flex-1 min-w-0">
@@ -278,8 +264,6 @@ export default function Sidebar() {
                   </p>
 
                 </div>
-
-                {/* LOGOUT */}
 
                 <LogOut
                   size={16}
@@ -296,7 +280,6 @@ export default function Sidebar() {
             )}
 
           </div>
-
 
           {/* COLLAPSE BUTTON */}
 
@@ -316,9 +299,6 @@ export default function Sidebar() {
     </>
   )
 }
-
-
-/* ================= HELPER ================= */
 
 function menuItem(path: string, label: string, icon: any, collapsed: boolean, isActive: any) {
 
